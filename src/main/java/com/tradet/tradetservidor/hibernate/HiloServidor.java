@@ -6,6 +6,8 @@
 package com.tradet.tradetservidor.hibernate;
 
 import com.tradet.excepciones.ExcepcionTradeT;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.apache.commons.net.ftp.FTP.BINARY_FILE_TYPE;
+import org.apache.commons.net.ftp.FTPClient;
 
 /**
  *
@@ -419,7 +423,7 @@ public class HiloServidor implements Runnable {
                     valoracionId = (HashMap) peticion.get("argumento");
                     try {
                         valoracion = componente.leerValoracion((Integer) valoracionId.get("usuario valorado"), (Integer) valoracionId.get("usuario valorador"));
-                        HashMap map = valoracion.toHash();                       
+                        HashMap map = valoracion.toHash();
                         ObjectOutputStream flujoSalida = new ObjectOutputStream(cliente.getOutputStream());
                         flujoSalida.flush();
                         flujoSalida.writeObject(map);
@@ -550,6 +554,83 @@ public class HiloServidor implements Runnable {
                     ObjectOutputStream flujoSalida = new ObjectOutputStream(cliente.getOutputStream());
                     flujoSalida.flush();
                     flujoSalida.writeObject(ex);
+                    flujoSalida.close();
+                }
+                break;
+                case "hacer copia":
+                    try {
+                    String comando = "cmd /c E:\\xampp\\mysql\\bin\\mysqldump --no-defaults -h localhost -u root tradet > C:\\users\\ricar\\tradet.sql";
+                    Runtime.getRuntime().exec(comando);
+                    FTPClient client = new FTPClient();
+                    String sFTP = "localhost";
+                    String sUser = "tradet";
+                    String sPassword = "kk";
+
+                    try {
+                        client.connect(sFTP);
+                        boolean login = client.login(sUser, sPassword);
+
+                        FileInputStream fis = new FileInputStream("C:\\users\\ricar\\tradet.sql");
+                        System.out.println(login);
+                        client.setFileType(BINARY_FILE_TYPE);
+                        client.setDataTimeout(10000000);
+                        client.setDefaultTimeout(100000000);
+                        client.setBufferSize(1000000000);
+                        client.storeFile("/tradet.sql", fis);
+                        fis.close();
+                        client.logout();
+                        client.disconnect();
+                    } catch (IOException ioe) {
+                        System.out.println(ioe);
+                    }
+                    ObjectOutputStream flujoSalida = new ObjectOutputStream(cliente.getOutputStream());
+                    flujoSalida.flush();
+                    flujoSalida.writeObject("ok");
+                    flujoSalida.close();
+                } catch (IOException ex) {
+                    ObjectOutputStream flujoSalida = new ObjectOutputStream(cliente.getOutputStream());
+                    flujoSalida.flush();
+                    flujoSalida.writeObject("error");
+                    flujoSalida.close();
+                }
+
+                break;
+
+                case "restaurar copia":
+                    try {
+
+                    FTPClient client = new FTPClient();
+                    String sFTP = "localhost";
+                    String sUser = "tradet";
+                    String sPassword = "kk";
+
+                    try {
+                        client.connect(sFTP);
+                        boolean login = client.login(sUser, sPassword);
+
+                        FileOutputStream fos = new FileOutputStream("C:\\users\\ricar\\tradet.sql");
+                        System.out.println(login);
+                        client.setFileType(BINARY_FILE_TYPE);
+                        client.setDataTimeout(10000000);
+                        client.setDefaultTimeout(100000000);
+                        client.setBufferSize(1000000000);
+                        client.retrieveFile("/tradet.sql", fos);
+                        fos.close();
+                        client.logout();
+                        client.disconnect();
+                        String comando = "cmd /c E:\\xampp\\mysql\\bin\\mysql -h localhost -u root tradet < C:\\users\\ricar\\tradet.sql";
+                        Runtime.getRuntime().exec(comando);
+                    } catch (IOException ioe) {
+                        System.out.println(ioe);
+                    }
+                    ObjectOutputStream flujoSalida = new ObjectOutputStream(cliente.getOutputStream());
+                    flujoSalida.flush();
+                    flujoSalida.writeObject("ok");
+                    flujoSalida.close();
+                } catch (IOException ex) {
+                    ObjectOutputStream flujoSalida = new ObjectOutputStream(cliente.getOutputStream());
+                    flujoSalida.flush();
+                    flujoSalida.writeObject("error");
                     flujoSalida.close();
                 }
 
