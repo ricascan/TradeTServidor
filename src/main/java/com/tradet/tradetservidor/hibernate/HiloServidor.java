@@ -28,6 +28,7 @@ public class HiloServidor implements Runnable {
 
     private TradeTComponenteAD componente;
     private Socket cliente;
+    private String ubicacionXampp = "E:\\xampp";
 
     public HiloServidor() {
     }
@@ -559,7 +560,7 @@ public class HiloServidor implements Runnable {
                 break;
                 case "hacer copia":
                     try {
-                    String comando = "cmd /c E:\\xampp\\mysql\\bin\\mysqldump --no-defaults -h localhost -u root tradet > C:\\users\\ricar\\tradet.sql";
+                    String comando = "cmd /c " + ubicacionXampp + "\\mysql\\bin\\mysqldump --no-defaults -h localhost -u root tradet > %USERPROFILE%\\Documents\\tradet.sql";
                     Runtime.getRuntime().exec(comando);
                     FTPClient client = new FTPClient();
                     String sFTP = "localhost";
@@ -569,8 +570,8 @@ public class HiloServidor implements Runnable {
                     try {
                         client.connect(sFTP);
                         boolean login = client.login(sUser, sPassword);
-
-                        FileInputStream fis = new FileInputStream("C:\\users\\ricar\\tradet.sql");
+                        
+                        FileInputStream fis = new FileInputStream(System.getProperty("user.home")+"\\Documents\\tradet.sql");
                         System.out.println(login);
                         client.setFileType(BINARY_FILE_TYPE);
                         client.setDataTimeout(10000000);
@@ -608,7 +609,7 @@ public class HiloServidor implements Runnable {
                         client.connect(sFTP);
                         boolean login = client.login(sUser, sPassword);
 
-                        FileOutputStream fos = new FileOutputStream("C:\\users\\ricar\\tradet.sql");
+                        FileOutputStream fos = new FileOutputStream(System.getProperty("user.home")+"\\Documents\\tradet.sql");
                         System.out.println(login);
                         client.setFileType(BINARY_FILE_TYPE);
                         client.setDataTimeout(10000000);
@@ -618,7 +619,7 @@ public class HiloServidor implements Runnable {
                         fos.close();
                         client.logout();
                         client.disconnect();
-                        String comando = "cmd /c E:\\xampp\\mysql\\bin\\mysql -h localhost -u root tradet < C:\\users\\ricar\\tradet.sql";
+                        String comando = "cmd /c " + ubicacionXampp + "\\mysql\\bin\\mysql -h localhost -u root tradet < %USERPROFILE%\\Documents\\tradet.sql";
                         Runtime.getRuntime().exec(comando);
                     } catch (IOException ioe) {
                         System.out.println(ioe);
