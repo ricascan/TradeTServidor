@@ -37,11 +37,6 @@
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
             <version>3.6</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tinify</groupId>
-            <artifactId>tinify</artifactId>
-            <version>RELEASE</version>
         </dependency>       
     </dependencies>
 </project>

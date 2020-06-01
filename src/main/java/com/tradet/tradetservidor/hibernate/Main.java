@@ -5,7 +5,6 @@
  */
 package com.tradet.tradetservidor.hibernate;
 
-import com.tinify.Tinify;
 import java.io.IOException;
 
 import java.net.ServerSocket;
@@ -26,8 +25,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             ServerSocket socketServidor = new ServerSocket(5557);
-            while (true) {
-                Tinify.setKey("7xbRQ4xNSmqfmW26P2T2s03fLV7DBXjc");
+            while (true) {              
                 Socket cliente = socketServidor.accept();
                 Runnable atenderPeticion = new HiloServidor(cliente);
                 Thread hiloServidor = new Thread(atenderPeticion);
