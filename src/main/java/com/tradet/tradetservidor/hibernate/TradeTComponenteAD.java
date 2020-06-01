@@ -354,7 +354,7 @@ public class TradeTComponenteAD {
         }
 
     }
-
+    
     public Integer insertarCategoria(Categoria c) throws ExcepcionTradeT {
         Integer registrosAfectados = 0;
         try {
@@ -832,5 +832,7 @@ public class TradeTComponenteAD {
         }
 
     }
+
+    
 
 }

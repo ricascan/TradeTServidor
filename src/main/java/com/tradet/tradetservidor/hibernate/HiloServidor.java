@@ -266,6 +266,29 @@ public class HiloServidor implements Runnable {
                     flujoSalida.close();
                 }
                 break;
+                
+                case "leer usuarios no imagen":
+                    try {
+                    listaUsuarios = componente.leerUsuarios("");
+                    ArrayList<HashMap> listaHashUsuarios = new ArrayList();
+
+                    for (Usuario u : listaUsuarios) {
+                        u.setFoto(null);
+                        HashMap map = u.toHash();
+                        listaHashUsuarios.add(map);
+                    }
+                    ObjectOutputStream flujoSalida = new ObjectOutputStream(cliente.getOutputStream());
+                    flujoSalida.flush();
+                    flujoSalida.writeObject(listaHashUsuarios);
+                    flujoSalida.close();
+                } catch (ExcepcionTradeT ex) {
+                    ObjectOutputStream flujoSalida = new ObjectOutputStream(cliente.getOutputStream());
+                    flujoSalida.flush();
+                    flujoSalida.writeObject(ex);
+                    flujoSalida.close();
+                }
+                break;
+                
                 case "leer usuarios filtro":
                     try {
                     listaUsuarios = componente.leerUsuarios((String) peticion.get("argumento"));
